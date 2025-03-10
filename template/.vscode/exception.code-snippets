@@ -1,0 +1,14 @@
+{
+  "no": {
+    "prefix": "no",
+    "body": [
+      "println!(\"No\");"
+    ]
+  },
+  "yes": {
+    "prefix": "yes",
+    "body": [
+      "println!(\"Yes\");"
+    ]
+  }
+}
