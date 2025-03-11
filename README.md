@@ -1,7 +1,7 @@
 # 使用方法
 ``` sh
 $ source env.fish
-$ atcoder abc123 # Function atcoder is defined at env.fish.
+$ atcoder_new abc123 # Function atcoder is defined at env.fish.
 $ cargo atcoder test a
 $ cargo atcoder submit a [-f]
 ```
