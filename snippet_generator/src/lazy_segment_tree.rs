@@ -138,7 +138,7 @@ impl LazySegmentTree {
             self.lazy_value[current_i] = lazy_sum;
             return None;
         }
-        
+
         // 範囲内の場合、
         if target.contains(&current_range) {
             // 値を持つ場合は、子が何であろうと関係ない
@@ -164,7 +164,7 @@ impl LazySegmentTree {
                 return self.value[current_i];
             }
         }
-        
+
         // 範囲外でも範囲内でもなく、重なっている場合は子の値に依存する
         // 遅延値はNoneにする
         self.lazy_value[current_i] = None;

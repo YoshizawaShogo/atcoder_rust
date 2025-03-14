@@ -1,8 +1,7 @@
 use cargo_snippet::snippet;
 
 #[snippet("inversion_number")]
-fn inversion_number(array: Vec<usize>) -> usize
-{
+fn inversion_number(array: Vec<usize>) -> usize {
     struct BinaryIndexedTree<A>(Vec<A>)
     where
         A: Sized + std::ops::AddAssign + Clone + Default;
@@ -33,7 +32,7 @@ fn inversion_number(array: Vec<usize>) -> usize
         i & i.wrapping_neg()
     }
 
-    // 
+    //
     let mut bit = BinaryIndexedTree(vec![0; *array.iter().max().unwrap() + 1]);
     let mut sum = 0;
 

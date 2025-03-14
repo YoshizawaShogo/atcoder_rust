@@ -40,6 +40,6 @@ fn ext_euclid(a: i64, b: i64) -> (i64, i64, i64) {
     if origin_a < origin_b {
         (x, y) = (y, x);
     }
-    
+
     (a, x, y)
 }

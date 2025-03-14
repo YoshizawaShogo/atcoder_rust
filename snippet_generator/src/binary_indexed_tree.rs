@@ -1,6 +1,5 @@
 use cargo_snippet::snippet;
 
-
 #[snippet("binary_indexed_tree")]
 /// 遅延セグメント木よりも機能が少ないが、
 /// 使いやすく、高速である事も多い

@@ -9,7 +9,7 @@ use cargo_snippet::snippet;
 fn mod_inv(divisor: usize, modulus: usize) -> usize {
     debug_assert_ne!(divisor, 0);
     debug_assert_ne!(modulus, 0);
-    
+
     let mut a = divisor;
     let mut b = modulus;
 

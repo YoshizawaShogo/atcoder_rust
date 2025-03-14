@@ -9,7 +9,7 @@ fn uniq_with_cnt<T>(sorted: Vec<T>) -> HashMap<T, usize>
 where
     T: Eq + std::hash::Hash,
 {
-    let mut counts= HashMap::new();
+    let mut counts = HashMap::new();
     for e in sorted {
         *counts.entry(e).or_insert(0) += 1;
     }
