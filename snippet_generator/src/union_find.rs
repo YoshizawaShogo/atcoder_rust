@@ -38,6 +38,9 @@ impl UnionFind {
         r1 == r2
     }
     fn union(&mut self, n1: usize, n2: usize) {
+        if self.is_connected(n1, n2) {
+            return;
+        }
         let mut r1 = self.root(n1);
         let mut r2 = self.root(n2);
         let s1 = self.size(r1);
@@ -80,15 +83,12 @@ struct PotentialUnionFind<T> {
     parents: Vec<i32>,
     potentials: Vec<T>,
 }
-
-#[snippet("potential_union_find")]
 #[allow(dead_code)]
 impl<T> PotentialUnionFind<T>
 where
     T: Default
         + Clone
         + Copy
-        + std::ops::Neg<Output = T>
         + std::ops::Add<Output = T>
         + std::ops::AddAssign
         + std::ops::Sub<Output = T>
@@ -102,14 +102,12 @@ where
         }
     }
     fn root(&mut self, n: usize) -> usize {
-        let pa = self.parents[n];
-        if pa < 0 {
+        if self.parents[n] < 0 {
             n
         } else {
-            let r = self.root(pa as usize);
-            let po = self.potentials[pa as usize];
+            let r = self.root(self.parents[n] as usize);
+            self.potentials[n] = self.potentials[self.parents[n] as usize].clone() + self.potentials[n].clone();
             self.parents[n] = r as i32;
-            self.potentials[n] += po;
             r
         }
     }
@@ -117,8 +115,12 @@ where
         self.root(n);
         self.potentials[n]
     }
-    fn potential_diff(&mut self, n1: usize, n2: usize) -> T {
-        self.potential(n2) - self.potential(n1)
+    fn potential_diff(&mut self, n1: usize, n2: usize) -> Option<T> {
+        if self.is_connected(n1, n2) {
+            Some(self.potential(n2) - self.potential(n1))
+        } else {
+            None
+        }
     }
     fn size(&mut self, n: usize) -> usize {
         let r = self.root(n);
@@ -128,28 +130,28 @@ where
         self.parents.len()
     }
     fn is_connected(&mut self, n1: usize, n2: usize) -> bool {
-        let r1 = self.root(n1);
-        let r2 = self.root(n2);
-        r1 == r2
+        self.root(n1) == self.root(n2)
     }
-    fn union(&mut self, n1: usize, n2: usize, mut potential: T) {
+    fn union(&mut self, n1: usize, n2: usize, potential: T) -> bool {
+        if self.is_connected(n1, n2) {
+            return !self.is_valid(n1, n2, potential);
+        }
+        let mut po = self.potential(n1) + potential - self.potential(n2);
         let mut r1 = self.root(n1);
         let mut r2 = self.root(n2);
-
-        if self.size(r1) < self.size(r2) {
+        if -self.parents[r1] < -self.parents[r2] {
             std::mem::swap(&mut r1, &mut r2);
-            potential = -potential;
+            po = T::default() - po;
         }
+        self.parents[r1] += self.parents[r2];
         self.parents[r2] = r1 as i32;
-        self.potentials[r2] = self.potential(n1) + potential - self.potential(n2);
-        let size = self.size(r1) + self.size(r2);
-        self.parents[r1] = -(size as i32);
+        self.potentials[r2] = po;
+        false
     }
     fn groups(&mut self) -> Vec<Vec<usize>> {
         let mut groups = vec![vec![]; self.len()];
         for i in 0..self.len() {
-            let r = self.root(i);
-            groups[r].push(i);
+            groups[self.root(i)].push(i);
         }
         groups.into_iter().filter(|g| g.len() != 0).collect()
     }
@@ -174,6 +176,7 @@ fn potential_union_find_test() {
     assert!(!uf.is_connected(0, 2));
 
     uf.union(0, 9, 5);
-    assert_eq!(uf.potential_diff(1, 9), 2);
+    assert_eq!(uf.potential_diff(1, 9), Some(2));
+    assert_eq!(uf.potential_diff(1, 8), None);
     assert_eq!(uf.groups()[0], vec![0, 1, 9]);
 }
